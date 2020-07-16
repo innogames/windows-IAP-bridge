@@ -13,7 +13,6 @@ protected:
   virtual void Execute() override;
   virtual void OnOK() override;
   virtual void OnError(const Napi::Error &e) override;
-  virtual void OnWorkComplete(Napi::Env env, napi_status status);
 
 private:
   WindowsStoreImpl *m_pImpl;
