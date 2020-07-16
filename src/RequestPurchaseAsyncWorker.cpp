@@ -36,5 +36,5 @@ void RequestPurchaseAsyncWorker::OnError(const Napi::Error &e) {
 }
 
 void RequestPurchaseAsyncWorker::OnWorkComplete(Napi::Env env, napi_status status) {
-  Callback().MakeCallback(Receiver().Value(), {env.Undefined(), env.Undefined()});
+  Callback().MakeCallback(Receiver().Value(), {env.Undefined(), env.Undefined(), env.Undefined()});
 }
