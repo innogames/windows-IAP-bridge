@@ -6,7 +6,8 @@
 
 class GetStoreProductsAsyncWorker : public Napi::AsyncWorker {
 public:
-  GetStoreProductsAsyncWorker(const Napi::Function &callback, Napi::Array &productKinds, WindowsStoreImpl *pImpl);
+  GetStoreProductsAsyncWorker(const Napi::Function &callback, Napi::Array &productKinds, Napi::Array &storeIds,
+                              WindowsStoreImpl *pImpl);
 
 protected:
   virtual void Execute() override;
@@ -16,6 +17,7 @@ protected:
 private:
   WindowsStoreImpl *m_pImpl;
   Napi::Array m_productKinds;
+  Napi::Array m_storeIds;
   winrt::Windows::Foundation::Collections::IIterator<winrt::Windows::Foundation::Collections::IKeyValuePair<
       winrt::hstring, winrt::Windows::Services::Store::StoreProduct>>
       m_result;

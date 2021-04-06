@@ -5,10 +5,10 @@
 #include <string>
 
 GetStoreProductsAsyncWorker::GetStoreProductsAsyncWorker(const Napi::Function &callback, Napi::Array &productKinds,
-                                                         WindowsStoreImpl *pImpl)
-    : Napi::AsyncWorker(callback), m_productKinds(productKinds), m_pImpl(pImpl), m_result(NULL) {}
+                                                         Napi::Array &storeIds, WindowsStoreImpl *pImpl)
+    : Napi::AsyncWorker(callback), m_productKinds(productKinds), m_storeIds(storeIds), m_pImpl(pImpl), m_result(NULL) {}
 
-void GetStoreProductsAsyncWorker::Execute() { m_result = m_pImpl->GetStoreProducts(m_productKinds); }
+void GetStoreProductsAsyncWorker::Execute() { m_result = m_pImpl->GetStoreProducts(m_productKinds, m_storeIds); }
 
 void GetStoreProductsAsyncWorker::OnOK() {
   Napi::Env env = Env();
@@ -16,9 +16,8 @@ void GetStoreProductsAsyncWorker::OnOK() {
   while (m_result.HasCurrent()) {
     Napi::Object storeProd = Napi::Object::New(env);
     Napi::Object storePrice = Napi::Object::New(env);
-    winrt::Windows::Foundation::Collections::IKeyValuePair<winrt::hstring,
-                                                           winrt::Windows::Services::Store::StoreProduct>
-        current = m_result.Current();
+    winrt::Windows::Foundation::Collections::IKeyValuePair<winrt::hstring, winrt::Windows::Services::Store::StoreProduct>
+      current = m_result.Current();
 
     storeProd.Set("inAppOfferToken", winrt::to_string(current.Value().InAppOfferToken()));
 
@@ -34,9 +33,9 @@ void GetStoreProductsAsyncWorker::OnOK() {
     m_result.MoveNext();
   }
   Callback().MakeCallback(Receiver().Value(), {
-                                                  env.Null(), // error first callback
-                                                  obj         // value sent back to the callback
-                                              });
+    env.Null(), // error first callback
+    obj         // value sent back to the callback
+  });
 }
 
 void GetStoreProductsAsyncWorker::OnError(const Napi::Error &e) {

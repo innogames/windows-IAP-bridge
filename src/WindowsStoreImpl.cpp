@@ -47,9 +47,8 @@ int WindowsStoreImpl::GetStoreApp(std::string id) {
 }
 
 Windows::Foundation::Collections::IIterator<winrt::Windows::Foundation::Collections::IKeyValuePair<
-    winrt::hstring, winrt::Windows::Services::Store::StoreProduct>>
-WindowsStoreImpl::GetStoreProducts(Napi::Array productKinds) {
-
+  winrt::hstring, winrt::Windows::Services::Store::StoreProduct>>
+WindowsStoreImpl::GetStoreProducts(Napi::Array productKinds, Napi::Array storeIds) {
   StoreContext context = StoreContext::GetDefault();
   auto initWindow = context.try_as<IInitializeWithWindow>();
   if (initWindow != nullptr) {
@@ -57,15 +56,23 @@ WindowsStoreImpl::GetStoreProducts(Napi::Array productKinds) {
   }
 
   Windows::Foundation::Collections::IVector<hstring> wProductKinds{winrt::single_threaded_vector<hstring>()},
-      wStoreIds{winrt::single_threaded_vector<hstring>()};
+    wStoreIds{winrt::single_threaded_vector<hstring>()};
   wProductKinds.Append(winrt::to_hstring("Application"));
   wProductKinds.Append(winrt::to_hstring("Consumable"));
   wProductKinds.Append(winrt::to_hstring("Durable"));
   wProductKinds.Append(winrt::to_hstring("UnmanagedConsumable"));
 
-  auto res = context.GetAssociatedStoreProductsAsync(wProductKinds).get();
-  auto associatedProd = res.Products();
-  return associatedProd.First();
+  if (storeIds.Length() == 0) {
+    auto assocProductsResult = context.GetAssociatedStoreProductsAsync(wProductKinds).get();
+    auto assocProducts = assocProductsResult.Products();
+    return assocProducts.First();
+  }
+
+  wStoreIds.Append(winrt::to_hstring("onyx_440_diamonds"));
+  wStoreIds.Append(winrt::to_hstring("onyx_2100_diamonds"));
+  auto productsResult = context.GetStoreProductsAsync(wProductKinds, wStoreIds).get();
+  auto products = productsResult.Products();
+  return products.First();
 }
 
 winrt::Windows::Services::Store::StoreAppLicense WindowsStoreImpl::GetStoreAppLicense() {

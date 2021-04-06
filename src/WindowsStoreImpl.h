@@ -39,7 +39,7 @@ public:
   int GetStoreApp(std::string id);
   winrt::Windows::Foundation::Collections::IIterator<winrt::Windows::Foundation::Collections::IKeyValuePair<
       winrt::hstring, winrt::Windows::Services::Store::StoreProduct>>
-  GetStoreProducts(Napi::Array productKinds);
+  GetStoreProducts(Napi::Array productKinds, Napi::Array storeIds);
   winrt::Windows::Services::Store::StoreAppLicense GetStoreAppLicense();
   bool GetIsMicrosoftAccrued();
   std::string GetCampaignId();

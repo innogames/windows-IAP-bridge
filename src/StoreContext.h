@@ -13,6 +13,7 @@ private:
   static Napi::FunctionReference constructor;
   Napi::Value GetAppLocalStorageFolder(const Napi::CallbackInfo &info);
   void GetAssociatedStoreProductsAsync(const Napi::CallbackInfo &info);
+  void GetStoreProductsAsync(const Napi::CallbackInfo &info);
   void GetCustomerPurchaseIdAsync(const Napi::CallbackInfo &info);
   void RequestPurchaseAsync(const Napi::CallbackInfo &info);
   void GetAppLicenseAsync(const Napi::CallbackInfo &info);

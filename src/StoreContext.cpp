@@ -21,6 +21,7 @@ Napi::Object StoreContext::Init(Napi::Env env, Napi::Object exports) {
                       InstanceMethod("initialize", &StoreContext::Initialize),
                       InstanceMethod("getAppLocalStorageFolder", &StoreContext::GetAppLocalStorageFolder),
                       InstanceMethod("getAssociatedStoreProductsAsync", &StoreContext::GetAssociatedStoreProductsAsync),
+                      InstanceMethod("getStoreProductsAsync", &StoreContext::GetStoreProductsAsync),
                       InstanceMethod("getCustomerPurchaseIdAsync", &StoreContext::GetCustomerPurchaseIdAsync),
                       InstanceMethod("requestPurchaseAsync", &StoreContext::RequestPurchaseAsync),
                       InstanceMethod("getAppLicenseAsync", &StoreContext::GetAppLicenseAsync),
@@ -80,8 +81,18 @@ void StoreContext::GetAssociatedStoreProductsAsync(const Napi::CallbackInfo &inf
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
   Napi::Array productKinds = info[0].As<Napi::Array>();
+  Napi::Array storeIds = Napi::Array::New(env, 0);
   Napi::Function cb = info[1].As<Napi::Function>();
-  (new GetStoreProductsAsyncWorker(cb, productKinds, GetInternalInstance()))->Queue();
+  (new GetStoreProductsAsyncWorker(cb, productKinds, storeIds, GetInternalInstance()))->Queue();
+}
+
+void StoreContext::GetStoreProductsAsync(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    Napi::Array productKinds = info[0].As<Napi::Array>();
+    Napi::Array storeIds = info[1].As<Napi::Array>();
+    Napi::Function cb = info[2].As<Napi::Function>();
+    (new GetStoreProductsAsyncWorker(cb, productKinds, storeIds, GetInternalInstance()))->Queue();
 }
 
 void StoreContext::RequestPurchaseAsync(const Napi::CallbackInfo &info) {
